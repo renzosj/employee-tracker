@@ -1,11 +1,12 @@
 const inquirer = require('inquirer');
+
 const { title, chalker } = require('./lib/chalk.js');
 const { mainMenu, renderSubMenu,
         renderUpdateMenu, updateMenu }
         = require('./lib/user_interface.js');
 const { viewDepartments, viewRoles, viewEmployees,
-        addDept, addRole, addEmployee, updateEmployee,
-        db } = require('./lib/queries.js');
+        addDept, addRole, db/*, addEmployee, updateEmployee*/}
+         = require('./lib/queries.js');
 
 function init() {
     try {
@@ -86,9 +87,10 @@ function mainMenuPrompt(questions) {
             break;
             case "Update an employee": 
                 viewEmployees();
-                renderSubMenu('employee');
-                inquirer.prompt(subMenu).then(answer => {
-                    updateEmployee(answer.input)
+                employeesArr = [];
+                renderUpdateMenu('employee');
+                inquirer.prompt(updateMenu).then(answer => {
+                    updateEmployee(answer.option)
                 });
             break;
             case 'Exit': process.exit();
