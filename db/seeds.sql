@@ -21,14 +21,14 @@ VALUES (001, "CEO", 0.99, 001),
        (010, "Receptionist", 12.00, 008);
 
 INSERT INTO employee (id, first_name, last_name, manager_id, role_id)
-VALUES (001, "Elon", "Gate", 101, 001),
-       (002, "Wade", "Wilson", 101, 002),
-       (003, "Jenna", "Worble", 102, 003),
-       (004, "Peter", "Rider", 203, 004),
-       (005, "Mary", "Joo-wana", 205, 005),
-       (006, "Pam", "Beasley", 303, 010),
-       (007, "Michel", "Zaki", 201, 009),
-       (008, "Tony", "Stank", 201, 008),
-       (009, "Lickey", "Louse", 103, 007),
-       (010, "Stanley", "Crudson", 203, 004),
-       (011, "Connor", "Connorsson", 204, 006);
+VALUES (001, "Elon", "Gate", null, 001),
+       (002, "Wade", "Wilson", 001, 002),
+       (003, "Jenna", "Worble", 001, 003),
+       (004, "Peter", "Rider", 002, 004),
+       (005, "Mary", "Joo-wana", 001, 005),
+       (006, "Pam", "Beasley", 003, 010),
+       (007, "Michel", "Zaki", 001, 009),
+       (008, "Tony", "Stank", 007, 008),
+       (009, "Lickey", "Louse", 001, 007),
+       (010, "Stanley", "Crudson", 002, 004),
+       (011, "Connor", "Connorsson", 007, 006);
