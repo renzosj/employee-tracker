@@ -1,9 +1,11 @@
 const inquirer = require('inquirer');
 const title = require('./lib/title.js');
-const { mainMenu, subMenu, renderSubMenu } = require('./lib/user_interface.js');
+const { mainMenu, subMenu, renderSubMenu,
+        renderUpdateMenu, updateMenu }
+        = require('./lib/user_interface.js');
 const { viewDepartments, viewRoles, viewEmployees,
-        addDept, addRole, addEmployee, updateEmployee,
-        db } = require('./lib/queries.js');
+        addDept, addRole, db/*, addEmployee, updateEmployee*/}
+         = require('./lib/queries.js');
 
 function init() {
     console.log(title);
@@ -21,11 +23,14 @@ function init() {
             case "Add a department": 
                 renderSubMenu('department');
                 inquirer.prompt(subMenu).then(answer => {
-                    addDept(answer.input)
-                });
+                    //addDept(answer.input)
+                    console.log(answer.option);
+               });
                 break;
             case "Add a role": 
-                renderSubMenu('role');
+                renderSubMenu('role title');
+                renderSubMenu('role salary amount');
+                renderSubMenu('role department');
                 inquirer.prompt(subMenu).then(answer => {
                     addRole(answer.input)
                 });
@@ -36,12 +41,13 @@ function init() {
                 });
             case "Update an employee": 
                 viewEmployees();
-                renderSubMenu('employee');
-                inquirer.prompt(subMenu).then(answer => {
-                    updateEmployee(answer.input)
+                employeesArr = [];
+                renderUpdateMenu('employee');
+                inquirer.prompt(updateMenu).then(answer => {
+                    updateEmployee(answer.option)
                 });
                 break;
-            case 'Exit': return;
+            case 'Exit': process.exit();
             default: return;
         }
         //console.log(answer);
