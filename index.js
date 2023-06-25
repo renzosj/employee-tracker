@@ -1,11 +1,9 @@
 const inquirer = require('inquirer');
 
 const { title, chalker } = require('./lib/chalk.js');
-const { mainMenu, renderSubMenu, renderUpdateMenu, updateMenu }
+const { mainMenu, renderAddMenu, renderUpdateMenu }
         = require('./lib/user_interface.js');
-const { viewDepartments, viewRoles, viewEmployees, addDept,
-         addRole, db/*, addEmployee, updateEmployee*/}
-        = require('./lib/queries.js');
+const {dbQuery} = require('./lib/queries.js');
 
 function init() {
     try {
@@ -15,49 +13,73 @@ function init() {
         console.error(err);
     }
 };
+var input = [];
+function storeInput(data) {
+    input.push(data);
+    return;
+}
 
-function subMenuPrompt(questions, data) {
-    return inquirer.prompt(questions).then(answer => {
-        //addDept(answer.input)
+function addMenuPrompt(questions, data) {
+    return inquirer.prompt(questions)
+    .then(answer => {
         console.log(chalker("New " + data +  " added: " + answer.option));
-    });
+        storeInput(answer.option);
+    })
+    .catch((err) => console.log(err));
+}
+
+function updateMenuPrompt(questions, data) {
+    return inquirer.prompt(questions)
+    .then(answer => {
+        console.log(chalker(data + " id to be updated " + answer.option));
+        storeInput(answer.option);
+    })
+    .catch((err) => console.log(err));
 }
 
 function mainMenuPrompt(questions) {
     inquirer.prompt(questions).then(answer => {
-        let subMenu;
+        let addMenu;
         switch (answer.option) {
             case "View all departments":
-                viewDepartments()
-                init();
+                dbQuery.viewDepartments()
+                .then(() => init())
             break;
             case "View all roles":
-                viewRoles()
-                init();
+                dbQuery.viewRoles()
+                .then(() => init())
             break;
             case "View all employees":
-                viewEmployees();
-                init();
+                dbQuery.viewEmployees()
+                .then(() => init())
             break;
-            case "Add a department": 
-                subMenu = renderSubMenu('department');
-                subMenu = subMenuPrompt(subMenu, 'department')
-                    .then(() => init())
+            case "Add a department":
+                input = []; 
+                addMenu = renderAddMenu('department');
+                addMenuPrompt(addMenu, 'department')
+                    .then(() => {
+                        dbQuery.addDepartment(input[0])
+                        .then (() => init())
+                    })
                     .catch((err) => {
                         console.error(err);
                         init();
                     });
             break;
             case "Add a role": 
-                subMenu = renderSubMenu('role title');
-                subMenu = subMenuPrompt(subMenu, 'role title')
+                input = [];
+                addMenu = renderAddMenu('role title');
+                addMenu = addMenuPrompt(addMenu, 'role title')
                 .then(() => {
-                    subMenu = renderSubMenu('role salary');
-                    subMenu = subMenuPrompt(subMenu, 'role salary')
+                    addMenu = renderAddMenu('role salary');
+                    addMenu = addMenuPrompt(addMenu, 'role salary')
                     .then(() => {
-                        subMenu = renderSubMenu('role department');
-                        subMenu = subMenuPrompt(subMenu, 'role department')
-                        .then(() => init())
+                        addMenu = renderAddMenu('role department');
+                        addMenu = addMenuPrompt(addMenu, 'role department')
+                        .then(() => {
+                            dbQuery.addRole(...input)
+                            .then(() => init())
+                        })
                         .catch((err) => {
                             console.error(err);
                             init();
@@ -74,19 +96,23 @@ function mainMenuPrompt(questions) {
                 });
             break;
             case "Add an employee": 
-                subMenu = renderSubMenu('employee first name');
-                //console.log(subMenu);
-                subMenu = subMenuPrompt(subMenu, 'employee first name')
+                input = [];
+                addMenu = renderAddMenu('employee first name');
+                //console.log(addMenu);
+                addMenu = addMenuPrompt(addMenu, 'employee first name')
                 .then(() => {
-                    subMenu = renderSubMenu('employee last name');
-                    subMenu = subMenuPrompt(subMenu, 'employee last name')
+                    addMenu = renderAddMenu('employee last name');
+                    addMenu = addMenuPrompt(addMenu, 'employee last name')
                     .then(() => {
-                        subMenu = renderSubMenu('employee role');
-                        subMenu = subMenuPrompt(subMenu, 'employee role')
+                        addMenu = renderAddMenu('employee role');
+                        addMenu = addMenuPrompt(addMenu, 'employee role')
                         .then(() => {
-                            subMenu = renderSubMenu('employee manager');
-                            subMenu = subMenuPrompt(subMenu, 'employee manager')
-                            .then(() => init())
+                            addMenu = renderAddMenu('employee manager');
+                            addMenu = addMenuPrompt(addMenu, 'employee manager')
+                            .then(() => {
+                                dbQuery.addEmployee(...input)
+                                .then(() => init())
+                            })  
                             .catch((err) => {
                                 console.error(err);
                                 init();
@@ -108,14 +134,27 @@ function mainMenuPrompt(questions) {
                 }); 
             break; 
             case "Update an employee role":
-                console.log(chalker("Determine the employee id whose role will be updated")); 
-                viewEmployees();
-               /* employeesArr = [];
-                renderUpdateMenu();
-                inquirer.prompt(updateMenu).then(answer => {
-                    updateEmployee(answer.option)
-                });*/
-                init();
+                input = [];
+                console.log(chalker("Note the employee id and the id of their role to be updated")); 
+                dbQuery.viewEmployeesById();
+                let updateMenu = renderUpdateMenu('employee');
+                updateMenuPrompt(updateMenu, 'employee')
+                .then(() => {
+                    updateMenu = renderUpdateMenu('role');
+                    updateMenuPrompt(updateMenu, 'role')
+                    .then(() => {
+                        dbQuery.updateEmployee(...input)
+                        .then(() => init())
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                        init();
+                    })
+                })
+                .catch((err) => {
+                    console.error(err);
+                    init();
+                })
             break;
             case 'Exit': process.exit();
             default: return;
