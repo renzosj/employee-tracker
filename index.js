@@ -1,12 +1,11 @@
 const inquirer = require('inquirer');
 
 const { title, chalker } = require('./lib/chalk.js');
-const { mainMenu, renderSubMenu,
-        renderUpdateMenu, updateMenu }
+const { mainMenu, renderSubMenu, renderUpdateMenu, updateMenu }
         = require('./lib/user_interface.js');
-const { viewDepartments, viewRoles, viewEmployees,
-        addDept, addRole, db/*, addEmployee, updateEmployee*/}
-         = require('./lib/queries.js');
+const { viewDepartments, viewRoles, viewEmployees, addDept,
+         addRole, db/*, addEmployee, updateEmployee*/}
+        = require('./lib/queries.js');
 
 function init() {
     try {
@@ -42,7 +41,7 @@ function mainMenuPrompt(questions) {
             break;
             case "Add a department": 
                 subMenu = renderSubMenu('department');
-                subMenu = subMenuPrompt(subMenu)
+                subMenu = subMenuPrompt(subMenu, 'department')
                     .then(() => init())
                     .catch((err) => {
                         console.error(err);
@@ -76,22 +75,47 @@ function mainMenuPrompt(questions) {
             break;
             case "Add an employee": 
                 subMenu = renderSubMenu('employee first name');
-                subMenu = subMenuPrompt('employee first name')
+                //console.log(subMenu);
+                subMenu = subMenuPrompt(subMenu, 'employee first name')
                 .then(() => {
-
+                    subMenu = renderSubMenu('employee last name');
+                    subMenu = subMenuPrompt(subMenu, 'employee last name')
+                    .then(() => {
+                        subMenu = renderSubMenu('employee role');
+                        subMenu = subMenuPrompt(subMenu, 'employee role')
+                        .then(() => {
+                            subMenu = renderSubMenu('employee manager');
+                            subMenu = subMenuPrompt(subMenu, 'employee manager')
+                            .then(() => init())
+                            .catch((err) => {
+                                console.error(err);
+                                init();
+                            });
+                        })
+                        .catch((err) => {
+                            console.error(err);
+                            init();
+                        });
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                        init();
+                    });
                 })
                 .catch((err) => {
                     console.error(err);
                     init();
-                });
-            break;
-            case "Update an employee": 
+                }); 
+            break; 
+            case "Update an employee role":
+                console.log(chalker("Determine the employee id whose role will be updated")); 
                 viewEmployees();
-                employeesArr = [];
-                renderUpdateMenu('employee');
+               /* employeesArr = [];
+                renderUpdateMenu();
                 inquirer.prompt(updateMenu).then(answer => {
                     updateEmployee(answer.option)
-                });
+                });*/
+                init();
             break;
             case 'Exit': process.exit();
             default: return;
