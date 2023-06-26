@@ -21,9 +21,9 @@ root. Requires node. Add SQL credentials to .env file.
 <a name="use"></a>
 ## Usage
 
-run npm i on CLI to get dependancies. run npm start.
+run npm i on CLI to get dependancies. run npm start. apply sql credentials to .env file
 
-[Video Demo]()
+[Video Demo](https://drive.google.com/file/d/1S5f7wRnazex6Tr0IaXa5ZiA3z_0g-6so/view?usp=sharing)
 
 <a name="license"></a>
 ## License
