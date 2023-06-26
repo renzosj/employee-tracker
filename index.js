@@ -7,7 +7,6 @@ const {dbQuery} = require('./lib/queries.js');
 
 function init() {
     try {
-        console.log(title);
         mainMenuPrompt(mainMenu);
     } catch (err) {
         console.error(err);
@@ -47,7 +46,7 @@ function mainMenuPrompt(questions) {
             break;
             case "View all roles":
                 dbQuery.viewRoles()
-                .then(() => init())
+                .then(()=> init())
             break;
             case "View all employees":
                 dbQuery.viewEmployees()
@@ -59,7 +58,7 @@ function mainMenuPrompt(questions) {
                 addMenuPrompt(addMenu, 'department')
                     .then(() => {
                         dbQuery.addDepartment(input[0])
-                        .then (() => init())
+                        .then(() => init())
                     })
                     .catch((err) => {
                         console.error(err);
@@ -74,8 +73,8 @@ function mainMenuPrompt(questions) {
                     addMenu = renderAddMenu('role salary');
                     addMenu = addMenuPrompt(addMenu, 'role salary')
                     .then(() => {
-                        addMenu = renderAddMenu('role department');
-                        addMenu = addMenuPrompt(addMenu, 'role department')
+                        addMenu = renderAddMenu('role department id');
+                        addMenu = addMenuPrompt(addMenu, 'role department id')
                         .then(() => {
                             dbQuery.addRole(...input)
                             .then(() => init())
@@ -104,11 +103,11 @@ function mainMenuPrompt(questions) {
                     addMenu = renderAddMenu('employee last name');
                     addMenu = addMenuPrompt(addMenu, 'employee last name')
                     .then(() => {
-                        addMenu = renderAddMenu('employee role');
-                        addMenu = addMenuPrompt(addMenu, 'employee role')
+                        addMenu = renderAddMenu('employee role id');
+                        addMenu = addMenuPrompt(addMenu, 'employee role id')
                         .then(() => {
-                            addMenu = renderAddMenu('employee manager');
-                            addMenu = addMenuPrompt(addMenu, 'employee manager')
+                            addMenu = renderAddMenu('employee manager id');
+                            addMenu = addMenuPrompt(addMenu, 'employee manager id')
                             .then(() => {
                                 dbQuery.addEmployee(...input)
                                 .then(() => init())
@@ -137,11 +136,11 @@ function mainMenuPrompt(questions) {
                 input = [];
                 console.log(chalker("Note the employee id and the id of their role to be updated")); 
                 dbQuery.viewEmployeesById();
-                let updateMenu = renderUpdateMenu('employee');
-                updateMenuPrompt(updateMenu, 'employee')
+                let updateMenu = renderUpdateMenu('employee id');
+                updateMenuPrompt(updateMenu, 'employee id')
                 .then(() => {
-                    updateMenu = renderUpdateMenu('role');
-                    updateMenuPrompt(updateMenu, 'role')
+                    updateMenu = renderUpdateMenu('role id');
+                    updateMenuPrompt(updateMenu, 'role id')
                     .then(() => {
                         dbQuery.updateEmployee(...input)
                         .then(() => init())
@@ -159,10 +158,12 @@ function mainMenuPrompt(questions) {
             case 'Exit': process.exit();
             default: return;
         }
-    }).catch((error) => {
+    })
+    .catch((error) => {
         if (error) console.log(error)
     })
 }
 
+console.log(title); // Welcome to Employee Manager
 init();
 
