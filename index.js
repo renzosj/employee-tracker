@@ -12,6 +12,7 @@ function init() {
         console.error(err);
     }
 };
+
 var input = [];
 function storeInput(data) {
     input.push(data);
@@ -166,4 +167,3 @@ function mainMenuPrompt(questions) {
 
 console.log(title); // Welcome to Employee Manager
 init();
-
